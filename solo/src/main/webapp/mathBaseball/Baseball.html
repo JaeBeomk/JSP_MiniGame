@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Baseball</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="Baseball.css" />
+    <link rel="stylesheet" href="../css/bootstrap.css">
+  </head>
+  <body>
+     <nav class="navbar navbar-default">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="../main.jsp">jsp 게시판웹</a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="../main.jsp">메인</a></li>
+				<li><a href="../bbs.jsp">게시판</a></li>
+			</ul>
+		</div>
+	</nav>
+    <header class="middle">
+      <input type="text" class="inputNumber" />
+      <input type="text" class="inputNumber" />
+      <input type="text" class="inputNumber" />
+    </header>
+
+    <main class="middle">
+      <div id="numberBox">
+        <div class="numberBtn" onclick="pushBtn(1)">1</div>
+        <div class="numberBtn" onclick="pushBtn(2)">2</div>
+        <div class="numberBtn" onclick="pushBtn(3)">3</div>
+        <br />
+        <div class="numberBtn" onclick="pushBtn(4)">4</div>
+        <div class="numberBtn" onclick="pushBtn(5)">5</div>
+        <div class="numberBtn" onclick="pushBtn(6)">6</div>
+        <br />
+        <div class="numberBtn" onclick="pushBtn(7)">7</div>
+        <div class="numberBtn" onclick="pushBtn(8)">8</div>
+        <div class="numberBtn" onclick="pushBtn(9)">9</div>
+      </div>
+ 
+
+<!-- 플렉스로 처리 -->
+      <div class="middle">
+        <input type="button" value="난수 생성" class="fnBtn" onclick="createNum()" />
+        <input type="button" value="지우기" class="fnBtn" onclick="eraseNum()" />
+        <input type="button" value="플레이" class="fnBtn" onclick="playGame()" />
+        
+        
+        
+        
+      </div>
+
+      <p id="scoreBox" class="middle">
+        <span id="strike">0</span>
+        <span> Strike, </span>
+        <span id="ball">0</span>
+        <span> Ball,</span>
+        <span id="CNT">0</span>
+        <span> Cnt.</span>
+      </p>
+      <div>
+        <button type="button" class="fnBtn" onclick="src()">설명서</button>
+      </div>
+    </main>
+
+
+    <script>
+      var ans = [];
+      var pushCnt = 0;
+      var cnt=0;
+      var inputBox = document.getElementsByClassName("inputNumber");
+      var strikeText = document.getElementById("strike");
+      var ballText = document.getElementById("ball");
+	  var CntText=document.getElementById("CNT");
+	  function src(){
+		  alert('숫자 3개를 6회 이내에 맞추세요!\n'+
+				'위치와 숫자가 맞으면 스트라이크 위치만 맞으면 볼입니다.\n'+
+				'지우기를 누르면 숫자가 지워집니다.');
+	  }
+      function createNum() {
+        do {
+          ans[0] = Math.floor(Math.random() * 9) + 1;
+          ans[1] = Math.floor(Math.random() * 9) + 1;
+          ans[2] = Math.floor(Math.random() * 9) + 1;
+        } while(ans[0] == ans[1] || ans[0] == ans[2] || ans[1] == ans[2]);
+
+        console.log(ans[0], ans[1], ans[2]);
+        alert("난수가 생성되었습니다. 기회는 6회 입니다.");
+        cnt=0;
+        CntText.innerText=cnt;
+        eraseNum();
+      }
+
+      function pushBtn(num) {
+        if (pushCnt > 2) return;
+        inputBox[pushCnt++].value = num;
+      }
+
+      function eraseNum() {
+        for (var i = 0; i < 3; i++) inputBox[i].value = "";
+        pushCnt = 0;
+        strikeText.innerText = "0";
+        ballText.innerText = "0";
+        
+      }
+
+      function isBlank() {
+        for (var i = 0; i < 3; i++) {
+          if (inputBox[i].value == "") return 1;
+        }
+        return 0;
+      }
+
+      function isRandomNumber() {
+        return ans[0] ? 0 : 1;
+      }
+     
+// function 사이사이 엔터
+      function playGame() {
+        if (isRandomNumber()) alert("난수를 생성해야 합니다.");
+        if (isBlank()) alert("모든 수를 입력해야 합니다.");
+		cnt+=1;
+        var strike = 0,
+          ball = 0,
+          num = [];
+
+        num[0] = document.getElementsByClassName("inputNumber")[0].value;
+        num[1] = document.getElementsByClassName("inputNumber")[1].value;
+        num[2] = document.getElementsByClassName("inputNumber")[2].value;
+
+        for (var i = 0; i < 3; i++) {
+          for (var j = 0; j < 3; j++) {
+            if (ans[i] == num[j]) {
+              if (i == j) strike++;
+              else ball++;
+            }
+          }
+        }
+        CntText.innerText=cnt;
+        strikeText.innerText = strike;
+        ballText.innerText = ball;
+        if(cnt>8){
+        	alert('8번안에 맞추지 못했습니다.');
+        	alert(`정답은 ${ans[0]}${ans[1]}${ans[2]} 였습니다.`);
+        	document.location.href="Baseball.html";
+        }
+        if(strike==3){
+        	alert(`정답!(${cnt}번만에 맞추셨습니다.)`);
+        	eraseNum();
+        	cnt=0;
+        	CntText.innerText=cnt;
+        }
+        
+      }
+    </script>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="../js/bootstrap.js"></script>
+</html>
